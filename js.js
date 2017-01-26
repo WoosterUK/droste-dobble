@@ -3,6 +3,19 @@ var phi = (Math.sqrt(5)-1)/2;
 
 var alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
+function shuffle (array) { // stolen shamelessly from https://www.frankmitchell.org/2015/01/fisher-yates/
+  var i = 0
+    , j = 0
+    , temp = null
+
+  for (i = array.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1))
+    temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+}
+
 function makeSymbol_number(n) {
 	var g = document.createElementNS(xmlns,'g');
 	g.setAttribute('id','s'+n);
@@ -28,6 +41,8 @@ function makeCard(id,symbols) {
 	s.setAttribute('id',id);
 	var t = '<circle cx="0" cy="0" r="1" class="outline" stroke="black" stroke-width="0.03" fill="white"></circle>';
 	var n,scale,translate;
+	var drawdeck = new Array(symbols.length);
+	shuffle(drawdeck);
 	if(symbols.length==3) {
 		n = 3;
 		scale = 0.44;
@@ -35,15 +50,15 @@ function makeCard(id,symbols) {
 	} else if(symbols.length==8) {
 		n = 7;
 		scale = 0.28;
-		translate = 2.4;
+//	translate = 2.4;
 	}
 	for(var i=0;i<symbols.length;i++) {
-		var transform = 'scale('+scale+')';
+		var transform = 'scale('+(0.5*scale + Math.random(0.5*scale))+')';
 		if(n==3 || i>0) {
 			var rotate = (i*360/n);
 			transform += ' translate('+translate+') rotate('+rotate+' -'+translate+' 0) rotate(-90)';
 		}
-		t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[i]+'"></use>'
+		t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[drawdeck[i]-1]+'"></use>'
 	}
 	s.innerHTML = t;
 	document.querySelector('svg#cards defs').appendChild(s);
